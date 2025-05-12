@@ -1,0 +1,33 @@
+# SmartTraffic AI Simulation
+
+import pandas as pd
+import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Simulate traffic data
+np.random.seed(0)
+data = pd.DataFrame({
+    'cars_waiting': np.random.randint(0, 50, 100),
+    'time_of_day': np.random.choice(['morning', 'afternoon', 'evening'], 100),
+    'day_of_week': np.random.choice(['weekday', 'weekend'], 100),
+    'light_duration': np.random.choice(['short', 'medium', 'long'], 100)
+})
+
+# Encode categorical data
+data_encoded = pd.get_dummies(data, columns=['time_of_day', 'day_of_week', 'light_duration'])
+X = data_encoded.drop(columns=['light_duration_long', 'light_duration_medium', 'light_duration_short'])
+y = data['light_duration']
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Train model
+model = DecisionTreeClassifier()
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Model Accuracy: {accuracy * 100:.2f}%")
